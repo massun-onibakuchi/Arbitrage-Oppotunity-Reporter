@@ -1,0 +1,8 @@
+
+node_modules/
+./.vscode
+.env
+credentials.json
+token.json
+**/*/config.test.json
+
