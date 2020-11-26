@@ -1,8 +1,8 @@
 
 node_modules/
-./.vscode
+.vscode
 .env
 credentials.json
 token.json
-**/*/config.test.json
+config.test.json
 
