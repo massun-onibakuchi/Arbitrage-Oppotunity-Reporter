@@ -71,7 +71,7 @@
   //   "pure-hardhat",
   //   "./test/waffle"
   // ],
-  "files": [
-    "src/ftx-accounts/index.ts"
-  ]
+  // "files": [
+  //   "src/index.ts"
+  // ]
 }

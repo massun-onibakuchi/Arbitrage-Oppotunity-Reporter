@@ -13,7 +13,7 @@ export const pushMessage = async (axiosBase: AxiosStatic, message: Message[], to
             method: 'POST',
             url: 'https://api.line.me/v2/bot/message/push',
             headers: {
-                Authorization: `Bearer ${CONFIG.LINE.BEAR_ACCESS_TOKEN}`
+                Authorization: `Bearer ${CONFIG.LINE.BEARER_ACCESS_TOKEN}`
             },
             data: {
                 to: to || CONFIG.LINE.USER_ID,

@@ -1,8 +1,8 @@
 import CCXT from 'ccxt';
 import axiosBase from 'axios';
-import { initExchange } from './exchange';
-import { Message, pushMessage } from './line';
-import { Prices, Tickers, ArbitrageCalculator, ArbitrageSet } from './arbitrageInterfaces';
+import { initExchange } from '../exchange';
+import { Message, pushMessage } from '../line';
+import { Prices, Tickers, ArbitrageCalculator, ArbitrageSet } from './interfaces/arbitrageInterfaces';
 import arbitrageConfig from './arbitrageConfig.json';
 
 const symbols = ['BTC', 'ETH', 'XRP'];
