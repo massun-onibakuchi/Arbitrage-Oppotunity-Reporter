@@ -26,4 +26,18 @@ const init = (path, data) => {
     }
 }
 
+const sheetConfig = (path, data) => {
+    try {
+        fs.readFileSync(path, data);
+        console.log('Find ',path);
+    } catch (err) {
+        console.log('err :>> ', err);
+        if (err.code === 'ENOENT') {
+            fs.writeFileSync(path, JSON.stringify(data));
+            console.log('Stored to', path);
+        }
+        else throw err;
+    }
+}
+
 module.exports = { init }

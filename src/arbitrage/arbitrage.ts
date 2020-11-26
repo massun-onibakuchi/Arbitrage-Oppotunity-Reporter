@@ -27,13 +27,13 @@ const assignTickers = (prices: Prices, target: any): Tickers => {
 }
 
 const addCPrices = async (tickers: Tickers, base: string, target: string): Promise<Tickers> => {
-    const baseRate = (await axiosBase.get('https://api.exchangeratesapi.io/latest?base=' + base.toUpperCase())).data.rates[target.toUpperCase()]
-    console.log(`${base.toUpperCase()}/${target.toUpperCase()}:${baseRate}`);
+    const rate = (await axiosBase.get('https://api.exchangeratesapi.io/latest?base=' + base.toUpperCase())).data.rates[target.toUpperCase()]
+    console.log(`${base.toUpperCase()}/${target.toUpperCase()}:${rate}`);
 
     for (const [, value] of Object.entries(tickers)) {
-        value["cask"] = value["ask"] * baseRate;
-        value["cbid"] = value["bid"] * baseRate;
-        value["rate"] = baseRate;
+        value["cask"] = value["ask"] * rate;
+        value["cbid"] = value["bid"] * rate;
+        value["rate"] = rate;
     }
     return tickers;
 }
@@ -64,9 +64,20 @@ const expectedReturn = (tickers: Tickers, arbitrageConfig): ArbitrageSet => {
         }
     } as ArbitrageCalculator
     for (const [key, value] of Object.entries(tickers)) {
-        value["buy"] = value["cask"] - value["bbid"] > 0 ? value["bbid"] : null
-        value["sellBasedUSD"] = value["bid"] - value["bbid"] > 0 ? value["bid"] : null
-        value["sellBasedJPY"] = value["cask"] - value["bbid"] > 0 ? value["bid"] * value["rate"] : null
+        // if (value['cask'] > value['bbid']) {
+        //     value["buy"] = value["bbid"]
+        //     value["high"] = 'USD'
+        //     value["sellBasedUSD"] = value["bid"]
+        //     value["sellBasedJPY"] = value["cbid"]
+        // } else {
+        //     value["buy"] = value["ask"]
+        //     value["high"] = 'JPY'
+        //     value["sellBasedUSD"] = value["bid"] / value['rate']
+        //     value["sellBasedJPY"] = value["bid"]
+        // }
+        value["buy"] = value["cask"] > value["bbid"] ? value["bbid"] : null
+        value["sellBasedUSD"] = value["cbid"] > value["bbid"] ? value["bid"] : null
+        value["sellBasedJPY"] = value["cask"] > value["bbid"] ? value["cbid"] : null
         value["quantity"] = arbitrageConfig[key]["fixedSize"]
             ? parseFloat(arbitrageConfig[key]["size"]) / value["bbid"]
             : parseFloat(arbitrageConfig[key]["quantity"]);
@@ -86,9 +97,12 @@ const logger = async (dataset: ArbitrageSet) => {
                 type: "text",
                 text: `
     symbol > ${el.symbol}
+    Buy  [bitbank] ¥ > ${el.buy}
+    Sell [FTX] $ > ${el.sellBasedUSD}
+    Sell [FTX] ¥ > ${el.sellBasedJPY?.toFixed(2)}
+    割高 (bitbank比) % > ${el.diffPercent().toFixed(3)}
     裁定金額 ¥ > ${el.totalMoney().toFixed(1)}
     取引量 > ${el.quantity.toFixed(2)}
-    割高 (bitbank比) % > ${el.diffPercent().toFixed(3)}
     profit ¥ > ${el.profit().toFixed(1)}
     expectedReturn % > ${el.expectedReturn().toFixed(3)}
     送金手数料 ¥ > ${el.sendFeeJPY().toFixed(0)}

@@ -1,6 +1,7 @@
 import TEST_CONFIG from '../config.test.json';
 
-export = process.env.NODE_ENV != 'production' ? TEST_CONFIG : {
+let CONFIG;
+ export default CONFIG = process.env.NODE_ENV != 'production' ? TEST_CONFIG : {
     "BITBANK": {
         "APIKEY": process.env.BB_APIKEY,
         "APISECRET": process.env.BB_APISECRET
@@ -15,16 +16,24 @@ export = process.env.NODE_ENV != 'production' ? TEST_CONFIG : {
         "ALL_NOTIF": false
     },
     "CREDENTIALS": {
-        "clien_id": process.env.client_id,
-        "client_secret": process.env.client_secret,
-        "redirect_urls": [
-            "urn:ietf:wg:oauth:2.0:oob",
-            "http://localhost"
-        ]
+        "installed": {
+            "clien_id": process.env.client_id,
+            "client_secret": process.env.client_secret,
+            "redirect_uris": [
+                "urn:ietf:wg:oauth:2.0:oob",
+                "http://localhost"
+            ]
+        }
+    },
+    "TOKEN": {
+        "access_token": process.env.access_token,
+        "refresh_token": process.env.refresh_token,
+        "scope": "https://www.googleapis.com/auth/spreadsheets",
+        "token_type": "Bearer",
+        "expiry_date": 1605062558223
+
     },
     "SPREAD_SHEET": {
-        "access_token": process.env.access_token,
-        "refresh_token":process.env.refresh_token,
         "SHEET_ID": process.env.SHEET_ID
     }
 }

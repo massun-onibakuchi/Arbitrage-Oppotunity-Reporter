@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "script": "npx ts-node -r dotenv/config src/index.ts",
-    "start": "npx ts-node -r dotenv/config  "
+    "script": "npx ts-node src/arbitrage/arbitrage.ts",
+    "start": "npx ts-node "
   },
   "author": "",
   "license": "ISC",
@@ -20,7 +20,7 @@
     "googleapis": "^64.0.0",
     "socket.io-client": "^2.3.0",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.5",
+    "typescript": "^4.1.2",
     "ws": "^7.4.0"
   },
   "devDependencies": {

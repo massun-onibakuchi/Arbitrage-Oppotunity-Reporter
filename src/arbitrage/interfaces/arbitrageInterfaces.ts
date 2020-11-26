@@ -52,6 +52,7 @@ interface ArbitrageData extends Ticker {
     quantity: number;
     tradeFeePercent: number;
     sendFeeCrypto: number;
+    high?:string;
 }
 interface ArbitrageCalculator extends ArbitrageData {
     diffPercent: () => number;

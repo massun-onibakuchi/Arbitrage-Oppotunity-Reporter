@@ -1,4 +1,3 @@
-// require('dotenv').config();
 const fs = require('fs').promises;
 const readline = require('readline');
 const { google } = require('googleapis');
