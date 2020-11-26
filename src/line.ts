@@ -1,5 +1,5 @@
 import { AxiosStatic } from 'axios';
-import CONFIG from '../config';
+import CONFIG from './config';
 
 export interface Message {
     type: 'text';

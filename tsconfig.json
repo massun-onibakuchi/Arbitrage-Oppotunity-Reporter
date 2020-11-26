@@ -72,6 +72,6 @@
   //   "./test/waffle"
   // ],
   "files": [
-    "src/index.ts"
+    "src/ftx-accounts/index.ts"
   ]
 }
