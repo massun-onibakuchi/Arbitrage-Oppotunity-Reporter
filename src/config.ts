@@ -17,7 +17,7 @@ let CONFIG;
     },
     "CREDENTIALS": {
         "installed": {
-            "clien_id": process.env.client_id,
+            "client_id": process.env.client_id,
             "client_secret": process.env.client_secret,
             "redirect_uris": [
                 "urn:ietf:wg:oauth:2.0:oob",
@@ -35,5 +35,6 @@ let CONFIG;
     },
     "SPREAD_SHEET": {
         "SHEET_ID": process.env.SHEET_ID
-    }
+    },
+    "BASIS":process.env.BASIS
 }

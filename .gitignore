@@ -7,3 +7,4 @@ token.json
 config.test.json
 src/ftx-accounts/
 src/playground/
+dist/**

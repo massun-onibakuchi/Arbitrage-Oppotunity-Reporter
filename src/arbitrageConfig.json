@@ -1,4 +1,5 @@
 {
+    "BASIS":0.5,
     "BTC/USD": {
         "fixedSize": true,
         "size":"50000",

@@ -3,12 +3,13 @@ import CCXT from 'ccxt';
 
 
 const setKeys = (exchangeId: string) => {
-    if (CONFIG[exchangeId]["APIKEY"] && CONFIG[exchangeId]["APISECRET"]){
-        return {
-            'APIKEY': CONFIG[exchangeId]["APIKEY"],
-            'APISECRET': CONFIG[exchangeId]["APISECRET"]
-        }
-    }else Error('[ERROR]:CANNOT_FIND_APIKEYS')
+    if (CONFIG[exchangeId]["APIKEY"] === undefined || CONFIG[exchangeId]["APISECRET"] === undefined) {
+        Error('[ERROR]:CANNOT_FIND_APIKEYS');
+    }
+    return {
+        'APIKEY': CONFIG[exchangeId]["APIKEY"],
+        'APISECRET': CONFIG[exchangeId]["APISECRET"]
+    }
 }
 
 /**

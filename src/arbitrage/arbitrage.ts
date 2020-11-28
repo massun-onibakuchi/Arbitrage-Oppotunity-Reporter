@@ -1,13 +1,7 @@
 import CCXT from 'ccxt';
-import axiosBase from 'axios';
-import { initExchange } from '../exchange';
 import { Message, pushMessage } from '../line';
-import { Prices, Tickers, ArbitrageCalculator, ArbitrageSet } from './interfaces/arbitrageInterfaces';
-import arbitrageConfig from './arbitrageConfig.json';
-
-const symbols = ['BTC', 'ETH', 'XRP'];
-const exchange = initExchange(CCXT, 'ftx') as CCXT.Exchange;
-const bb = new CCXT['bitbank']();
+import axiosBase from 'axios';
+import { Prices, Tickers, ArbitrageCalculator, ArbitrageSet } from '../interfaces/arbitrageInterfaces';
 
 const assignTickers = (prices: Prices, target: any): Tickers => {
     const tickers = {};
@@ -110,7 +104,7 @@ const logger = (dataset: ArbitrageSet) => {
     送金手数料 ¥ > ${el.sendFeeJPY().toFixed(0)}
     `
             } as Message;
-            console.log(message['text']);
+            console.log("[Info]:Log",message['text']);
         }
     }
 }
@@ -120,7 +114,7 @@ const judgeOp = async (basis = 1, dataset: ArbitrageSet, log: Boolean): Promise<
     for (const [key, data] of Object.entries(dataset)) {
         tmp = (data.expectedReturn() > (tmp?.bestReturn || 0)) && { symbol: key, bestReturn: data.expectedReturn() }
     }
-    if ((tmp.bestReturn > basis) && !tmp?.bestReturn) {
+    if ((tmp.bestReturn > basis) && (tmp?.bestReturn != undefined)) {
         log && logger(dataset);
         const el = dataset[tmp.symbol];
         const message = {
@@ -142,16 +136,6 @@ const judgeOp = async (basis = 1, dataset: ArbitrageSet, log: Boolean): Promise<
         return el;
     }
     return null;
-
 }
 
-(async () => {
-    const res = await exchange.fetchTickers(symbols.map(el => el + '/USD')) as Prices;
-    let tickers = assignTickers(res, {});
-    await addCPrices(tickers, 'USD', 'JPY');
-    tickers = await addBPrices(tickers, bb, symbols.map(el => el + '/JPY'), 'USD');
-    const dataset = expectedReturn(tickers, arbitrageConfig);
-    logger(dataset);
-    const data = await judgeOp(1, dataset, true);
-    console.log('data :>> ', data);
-})()
+export { assignTickers, addBPrices, addCPrices, expectedReturn, logger, judgeOp };
