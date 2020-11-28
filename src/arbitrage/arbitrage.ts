@@ -139,7 +139,7 @@ const judgeOp = async (basis = 1, dataset: ArbitrageSet, log: Boolean): Promise<
     `
         } as Message;
         await pushMessage(axiosBase, [message]);
-        return dataset[tmp.symbol]
+        return el;
     }
     return null;
 
@@ -154,6 +154,4 @@ const judgeOp = async (basis = 1, dataset: ArbitrageSet, log: Boolean): Promise<
     logger(dataset);
     const data = await judgeOp(1, dataset, true);
     console.log('data :>> ', data);
-
-    // const text = `${Date.now()}:${data.symbol}  ${data.totalMoney()} ${data.diffPercent()} ${data.expectedReturn()}`;
 })()

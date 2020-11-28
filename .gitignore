@@ -5,5 +5,5 @@ node_modules/
 credentials.json
 token.json
 config.test.json
-src/ftx-accounts
-src/playground
+src/ftx-accounts/
+src/playground/
