@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx ts-node  -r dotenv/config src/index.ts"
+    "start": "npx ts-node src/index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -20,9 +20,9 @@
     "typescript": "^4.1.2"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
     "@types/node": "^14.14.7",
     "@types/socket.io-client": "^1.4.34",
-    "dotenv": "^8.2.0",
     "eslint": "^7.13.0"
   }
 }
