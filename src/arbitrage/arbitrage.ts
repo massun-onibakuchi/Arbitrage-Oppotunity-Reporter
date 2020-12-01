@@ -22,7 +22,7 @@ const assignTickers = (prices: Prices, target: any): Tickers => {
 
 const addCPrices = async (tickers: Tickers, base: string, target: string): Promise<Tickers> => {
     const rate = (await axiosBase.get('https://api.exchangeratesapi.io/latest?base=' + base.toUpperCase())).data.rates[target.toUpperCase()]
-    console.log(`${base.toUpperCase()}/${target.toUpperCase()}:${rate}`);
+    console.log(`${base.toUpperCase()}/${target.toUpperCase()}:${rate?.toFixed(3)}`);
 
     for (const [, value] of Object.entries(tickers)) {
         value["cask"] = value["ask"] * rate;
@@ -34,9 +34,19 @@ const addCPrices = async (tickers: Tickers, base: string, target: string): Promi
 
 const addBPrices = async (tickers: Tickers, exchange: CCXT.Exchange, symbols: string[], base): Promise<Tickers> => {
     for (const symbol of symbols) {
-        const res = await exchange.fetchTicker(symbol)
+        const res = await new Promise((resolve, rejects) => {
+            setTimeout(async () => {
+                try {
+                    const res = await exchange.fetchTicker(symbol);
+                    resolve(res);
+                } catch (e) {
+                    rejects(e);
+                }
+            }, 1500);
+        });
         tickers[symbol.replace('/JPY', '/USD')]["bask"] = res["ask"];
         tickers[symbol.replace('/JPY', '/USD')]["bbid"] = res["bid"];
+
     }
     return tickers;
 }
@@ -54,7 +64,8 @@ const expectedReturn = (tickers: Tickers, arbitrageConfig): ArbitrageSet => {
             return this.quantity * (Math.abs(this.diffPercent()) * this.buy - this.tradeFeePercent * this.sellBasedJPY) / 100 - this.sendFeeCrypto * this.buy
         },
         expectedReturn: function () {
-            return 100 * this.profit() / this.totalMoney()
+            const exp = 100 * this.profit() / this.totalMoney();
+            return (Math.abs(exp) > this.diffPercent()) ? null : exp;
         }
     } as ArbitrageCalculator
     for (const [key, value] of Object.entries(tickers)) {
@@ -100,11 +111,11 @@ const logger = (dataset: ArbitrageSet) => {
     裁定金額 ¥ > ${el.totalMoney().toFixed(1)}
     取引量 > ${el.quantity.toFixed(2)}
     profit ¥ > ${el.profit().toFixed(1)}
-    expectedReturn % > ${el.expectedReturn().toFixed(3)}
+    expectedReturn % > ${el.expectedReturn()?.toFixed(3)}
     送金手数料 ¥ > ${el.sendFeeJPY().toFixed(0)}
     `
             } as Message;
-            console.log("[Info]:Log",message['text']);
+            console.log("[Info]:Log", message['text']);
         }
     }
 }
