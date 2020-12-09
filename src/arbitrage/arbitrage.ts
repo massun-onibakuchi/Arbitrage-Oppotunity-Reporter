@@ -120,33 +120,49 @@ const logger = (dataset: ArbitrageSet) => {
     }
 }
 
-const judgeOp = async (basis = 1, dataset: ArbitrageSet, log: Boolean): Promise<ArbitrageCalculator> => {
-    let tmp = { symbol: '', diff: 0 };
+const judgeOp = async (basis = 1, dataset: ArbitrageSet, log: Boolean): Promise<ArbitrageCalculator[]> => {
+    const satisfiedData: ArbitrageCalculator[] = [];
     for (const [key, data] of Object.entries(dataset)) {
-        tmp = (data.diffPercent() > (tmp?.diff || 0)) && { symbol: key, diff: data.diffPercent() }
+        if (Math.abs(data?.diffPercent()) > basis) {
+            satisfiedData.push(data);
+            const message = {
+                type: "text",
+                text: `symbol > ${data.symbol}
+Buy [bitbank] ¥ > ${data.buy}\nSell [FTX] $ > ${data.sellBasedUSD}
+Sell [FTX] ¥ > ${data.sellBasedJPY?.toFixed(2)}
+割高 (bitbank比) % > ${data.diffPercent().toFixed(3)}
+裁定金額 ¥ > ${data.totalMoney().toFixed(1)}
+取引量 > ${data.quantity.toFixed(2)}
+profit ¥ > ${data.profit()?.toFixed(1)}
+expectedReturn % > ${data.expectedReturn()?.toFixed(3)}
+送金手数料 ¥ > ${data.sendFeeJPY()?.toFixed(0)}
+                `
+            } as Message;
+            await pushMessage(axiosBase, [message]);
+        }
     }
-    if ((Math.abs(tmp.diff) > basis) && (tmp?.diff != undefined)) {
-        log && logger(dataset);
-        const el = dataset[tmp.symbol];
-        const message = {
-            type: "text",
-            text: `
-    symbol > ${el.symbol}
-    Buy  [bitbank] ¥ > ${el.buy}
-    Sell [FTX] $ > ${el.sellBasedUSD}
-    Sell [FTX] ¥ > ${el.sellBasedJPY?.toFixed(2)}
-    割高 (bitbank比) % > ${el.diffPercent().toFixed(3)}
-    裁定金額 ¥ > ${el.totalMoney().toFixed(1)}
-    取引量 > ${el.quantity.toFixed(2)}
-    profit ¥ > ${el.profit().toFixed(1)}
-    expectedReturn % > ${el.expectedReturn().toFixed(3)}
-    送金手数料 ¥ > ${el.sendFeeJPY().toFixed(0)}
-    `
-        } as Message;
-        await pushMessage(axiosBase, [message]);
-        return el;
-    }
-    return null;
+    log && logger(dataset);
+
+    // if ((Math.abs(tmp.diff) > basis) && (tmp?.diff != undefined)) {
+    //     log && logger(dataset);
+    //     const el = dataset[tmp.symbol];
+    //     const message = {
+    //         type: "text",
+    //         text: `
+    // symbol > ${el.symbol}
+    // Buy  [bitbank] ¥ > ${el.buy}
+    // Sell [FTX] $ > ${el.sellBasedUSD}
+    // Sell [FTX] ¥ > ${el.sellBasedJPY?.toFixed(2)}
+    // 割高 (bitbank比) % > ${el.diffPercent().toFixed(3)}
+    // 裁定金額 ¥ > ${el.totalMoney().toFixed(1)}
+    // 取引量 > ${el.quantity.toFixed(2)}
+    // profit ¥ > ${el.profit().toFixed(1)}
+    // expectedReturn % > ${el.expectedReturn().toFixed(3)}
+    // 送金手数料 ¥ > ${el.sendFeeJPY().toFixed(0)}
+    // `
+    //     } as Message;
+    // await pushMessage(axiosBase, [message]);
+    return satisfiedData;
 }
 
 export { assignTickers, addBPrices, addCPrices, expectedReturn, logger, judgeOp };
