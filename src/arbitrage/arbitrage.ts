@@ -121,11 +121,11 @@ const logger = (dataset: ArbitrageSet) => {
 }
 
 const judgeOp = async (basis = 1, dataset: ArbitrageSet, log: Boolean): Promise<ArbitrageCalculator> => {
-    let tmp = { symbol: '', bestReturn: 0 };
+    let tmp = { symbol: '', diff: 0 };
     for (const [key, data] of Object.entries(dataset)) {
-        tmp = (data.expectedReturn() > (tmp?.bestReturn || 0)) && { symbol: key, bestReturn: data.expectedReturn() }
+        tmp = (data.diffPercent() > (tmp?.diff || 0)) && { symbol: key, diff: data.diffPercent() }
     }
-    if ((tmp.bestReturn > basis) && (tmp?.bestReturn != undefined)) {
+    if ((Math.abs(tmp.diff) > basis) && (tmp?.diff != undefined)) {
         log && logger(dataset);
         const el = dataset[tmp.symbol];
         const message = {
