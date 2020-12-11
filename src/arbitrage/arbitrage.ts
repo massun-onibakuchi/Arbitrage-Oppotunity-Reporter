@@ -64,8 +64,7 @@ const expectedReturn = (tickers: Tickers, arbitrageConfig): ArbitrageSet => {
             return this.quantity * (Math.abs(this.diffPercent()) * this.buy - this.tradeFeePercent * this.sellBasedJPY) / 100 - this.sendFeeCrypto * this.buy
         },
         expectedReturn: function () {
-            const exp = 100 * this.profit() / this.totalMoney();
-            return (Math.abs(exp) > this.diffPercent()) ? null : exp;
+            return 100 * this.profit() / this.totalMoney();
         }
     } as ArbitrageCalculator
     for (const [key, value] of Object.entries(tickers)) {
