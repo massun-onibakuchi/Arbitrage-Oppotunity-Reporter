@@ -38,8 +38,9 @@ const repeat = (func: { (): Promise<void>; (): void; },) => {
     // await new Promise(resolve => setTimeout(resolve, 25 * 1000));
     // repeat(func);
     try {
-        func();
         if (expiration < Date.now()) process.exit(0);
+        console.log('[Info]:Processing...');
+        func();
     } catch (e) {
         console.log('[ERROR] :>> ', e);
         console.log('[Info]:EXIT(1)');
