@@ -39,7 +39,7 @@ const repeat = (func: { (): Promise<void>; (): void; },) => {
     // repeat(func);
     try {
         func();
-        if (expiration > Date.now()) process.exit(0);
+        if (expiration < Date.now()) process.exit(0);
     } catch (e) {
         console.log('[ERROR] :>> ', e);
         console.log('[Info]:EXIT(1)');
