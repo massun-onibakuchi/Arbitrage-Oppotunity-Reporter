@@ -1,5 +1,5 @@
-import CONFIG from './config';
 import CCXT from 'ccxt';
+import CONFIG from './config';
 
 
 const setKeys = (exchangeId: string) => {
