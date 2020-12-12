@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc --outDir  ./dist",
-    "start": "npx ts-node src/index.ts"
+    "start": "npx ts-node src/index.ts",
+    "start:local": "npx ts-node -r dotenv/config src/index.ts"
   },
   "author": "",
   "license": "ISC",

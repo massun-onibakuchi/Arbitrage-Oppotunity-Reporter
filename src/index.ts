@@ -7,11 +7,12 @@ import { assignTickers, addBPrices, addCPrices, expectedReturn, logger, judgeOp 
 import arbitrageConfig from './arbitrageConfig.json';
 import config from './config';
 
+
 const exchange = initExchange(CCXT, 'ftx');
 const bb = new CCXT['bitbank']();
 const symbols = ['BTC', 'ETH', 'XRP', 'LTC'];
 
-(async () => {
+const main = async () => {
     try {
         const res = await exchange.fetchTickers(symbols.map(el => el + '/USD')) as Prices;
         let tickers = assignTickers(res, {});
@@ -20,7 +21,7 @@ const symbols = ['BTC', 'ETH', 'XRP', 'LTC'];
         const dataset = expectedReturn(tickers, arbitrageConfig);
         logger(dataset);
         const data = await judgeOp(Number(config.BASIS), dataset, false);
-        console.log('data :>> ', data);
+        // console.log('data :>> ', data);
     }
     catch (e) {
         await pushMessage(axiosBase, [{
@@ -29,4 +30,26 @@ const symbols = ['BTC', 'ETH', 'XRP', 'LTC'];
         }])
         console.log('[ERROR]:', e);
     }
-})()
+}
+const TIMEOUT = 3600 * 1000;
+const expiration = Date.now() + TIMEOUT;
+
+const repeat = (func: { (): Promise<void>; (): void; },) => {
+    // await new Promise(resolve => setTimeout(resolve, 25 * 1000));
+    // repeat(func);
+    try {
+        func();
+        if (expiration > Date.now()) process.exit(0);
+    } catch (e) {
+        console.log('[ERROR] :>> ', e);
+        console.log('[Info]:EXIT(1)');
+        process.exit(1)
+    }
+    setTimeout(() => {
+        repeat(func);
+    }, 120 * 1000);
+}
+
+repeat(main);
+
+// main()
